@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { FormInstance, FormRules } from 'element-plus'
+import { useStore } from 'vuex'
 
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive({
   username: '',
   password: ''
 })
-const rules =  reactive<FormRules>({
+const rules = reactive<FormRules>({
   username: [{
     required: true,
     message: '请输入用户名',
@@ -28,13 +29,42 @@ const logIn = async (formEl: FormInstance | undefined) => {
     if (valid) {
       console.log(ruleForm.username);
       console.log(ruleForm.password);
-      
+
       console.log('submit!')
     } else {
       console.log('error submit!', fields)
     }
   })
 }
+
+const props = withDefaults(
+  defineProps<{
+    msg: string,
+    list: Array<number>
+  }>(), {
+  msg: "123",
+  list: () => [1, 2]
+}
+)
+
+// const emits = defineEmits(['parentClick'])
+const emits = defineEmits<{
+  (e:'parentClick', data:string): void
+}>()
+const sendItem = () => {
+  emits('parentClick', '这是子组件的值2')
+}
+
+const store = useStore()
+const count = computed(() => {
+  return store.state.count
+})
+
+const increment = () => {
+  store.commit('increment')
+}
+
+
 
 </script>
 
@@ -49,11 +79,13 @@ const logIn = async (formEl: FormInstance | undefined) => {
         <el-input type="password" v-model="ruleForm.password"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="logIn(ruleFormRef)">登录</el-button>
-        <el-button>注册</el-button>
+        <el-button type="primary" @click="logIn(ruleFormRef)">登录{{ list }}</el-button>
+        <el-button @click="sendItem" >注册{{ msg }}</el-button>
       </el-form-item>
     </el-form>
   </el-card>
+  <button @click="increment">{{ count }}</button>
+  <slot name="header"></slot>
 </template>
 
 <style scoped>

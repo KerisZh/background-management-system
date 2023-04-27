@@ -1,19 +1,22 @@
-import { createWebHistory, createRouter,RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 // import Login from ' /components/login.vue'
 
 const routes:Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "login",
-    component: () => ('@/components/login.vue'),
-    alias: "/login"
+    component: () => import('@/layout/index.vue'),
   },
   {
-    path: "/info",
-    name: "info",
-    component: () => (''),
-    alias: "/info"
-  }
+    path: "/login",
+    name: "login",
+    component: () => import('@/components/login.vue'),
+  },
+  // {
+  //   path: "/info",
+  //   name: "info",
+  //   component: () => (''),
+  //   alias: "/info"
+  // }
 ]
 
 const router = createRouter({

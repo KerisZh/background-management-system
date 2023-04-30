@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import { FormInstance, FormRules } from 'element-plus'
-import { useStore } from 'vuex'
+import router from '@/router'
 
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive({
@@ -27,9 +27,19 @@ const logIn = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log(ruleForm.username);
-      console.log(ruleForm.password);
+      if (ruleForm.username === 'admin' && ruleForm.password === 'admin') {
+        localStorage.setItem('userType', 'manager')
+        router.replace('./manage')
+      } else {
+        localStorage.setItem('userType', 'user')
+        localStorage.setItem('userInfo', JSON.stringify({
+          account: ruleForm.username,
+          password: ruleForm.password,
+          name: '张三'
+        }));
 
+        router.replace('./info')
+      }
       console.log('submit!')
     } else {
       console.log('error submit!', fields)
@@ -37,54 +47,29 @@ const logIn = async (formEl: FormInstance | undefined) => {
   })
 }
 
-const props = withDefaults(
-  defineProps<{
-    msg: string,
-    list: Array<number>
-  }>(), {
-  msg: "123",
-  list: () => [1, 2]
+const register = () => {
+  router.replace('./register')
 }
-)
-
-// const emits = defineEmits(['parentClick'])
-const emits = defineEmits<{
-  (e:'parentClick', data:string): void
-}>()
-const sendItem = () => {
-  emits('parentClick', '这是子组件的值2')
-}
-
-const store = useStore()
-const count = computed(() => {
-  return store.state.count
-})
-
-const increment = () => {
-  store.commit('increment')
-}
-
-
 
 </script>
 
 <template>
-  <el-card shadow="always">
+  <el-card class="loginCard" shadow="always">
     <!-- 登录表单 -->
-    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules">
-      <el-form-item label="用户名" prop="username">
+    <h2 style="text-align: center;">后台管理系统</h2>
+    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-position="left">
+      <el-form-item label="账号" prop="username">
         <el-input v-model="ruleForm.username"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password">
         <el-input type="password" v-model="ruleForm.password"></el-input>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="logIn(ruleFormRef)">登录{{ list }}</el-button>
-        <el-button @click="sendItem" >注册{{ msg }}</el-button>
+      <el-form-item class="login-button">
+        <el-button type="primary" @click="logIn(ruleFormRef)">登录</el-button>
+        <el-button @click="register">注册</el-button>
       </el-form-item>
     </el-form>
   </el-card>
-  <button @click="increment">{{ count }}</button>
   <slot name="header"></slot>
 </template>
 
@@ -92,4 +77,13 @@ const increment = () => {
 /* .read-the-docs {
   color: #888;
 } */
+.loginCard {
+  width: 500px;
+  height: 300px;
+}
+
+.login-button {
+  display: inline-block;
+  margin-left: 176px;
+}
 </style>

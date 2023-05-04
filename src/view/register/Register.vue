@@ -1,7 +1,7 @@
 <template>
   <el-card style="width: 500px;">
     <h2 style="text-align: center;">账号注册</h2>
-    <el-form label-width="80px" :model="formData" ref="form">
+    <el-form label-width="80px" :model="formData" ref="formRef" :rules="rules">
       <el-form-item label="账号" prop="username">
         <el-input v-model="formData.username"></el-input>
       </el-form-item>
@@ -12,18 +12,21 @@
         <el-input type="password" v-model="formData.password"></el-input>
       </el-form-item>
       <el-form-item label="确认密码" prop="confirmPassword">
-        <el-input type="password" v-model="formData.confirmPassword" @blur="checkPassword"></el-input>
-        <div v-if="passwordError" style="color: red;">两次输入的密码不相同，请重新输入。</div>
+        <el-input type="password" v-model="formData.confirmPassword"></el-input>
+        <!-- <div v-if="passwordError" style="color: red;">两次输入的密码不相同，请重新输入。</div> -->
       </el-form-item>
       <el-form-item>
-        <el-button style="margin-left: 170px;" type="primary" @click="submitForm">注册</el-button>
+        <el-button style="margin-left: 128px;" type="primary" @click="submitForm">注册</el-button>
       </el-form-item>
     </el-form>
   </el-card>
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref } from 'vue'
+import { reactive, ref } from 'vue'
+import { userRegister } from '@/api/user'
+import { ElMessage, FormRules } from 'element-plus'
+import router from '@/router'
 
 interface FormData {
   username: string
@@ -39,24 +42,67 @@ const formData = ref<FormData>({
   confirmPassword: ''
 })
 
+const rules = reactive<FormRules>({
+  username: [{
+    required: true,
+    message: '请输入用户名',
+    trigger: 'blur'
+  }],
+  name: [{
+    required: true,
+    message: '请输入姓名',
+    trigger: 'blur'
+  }],
+  password: [{
+    required: true,
+    message: '请输入密码',
+    trigger: 'blur'
+  }],
+  confirmPassword: [{
+    required: true,
+    message: '请确认密码',
+    trigger: 'blur'
+  },
+  { validator: checkPassword, trigger: 'blur' }]
+})
+
 const formRef = ref()
 const passwordError = ref(false)
 
-function checkPassword() {
-  if (formData.value.password !== formData.value.confirmPassword) {
-    passwordError.value = true
+// function checkPassword() {
+//   if (formData.value.password !== formData.value.confirmPassword) {
+//     passwordError.value = true
+//     return new Error('两次输入的密码不相同，请重新输入。')
+//   } else {
+//     passwordError.value = false
+//     return undefined
+//   }
+// }
+
+function checkPassword(rule: any, value: string, callback: Function) {
+  if (value !== formData.value.password) {
+    callback(new Error('两次输入的密码不相同，请重新输入。'))
   } else {
-    passwordError.value = false
+    callback()
   }
 }
 
+
 function submitForm() {
+  console.log(formRef);
+
   formRef.value?.validate((valid: boolean) => { // 使用可选链运算符
     if (valid && !passwordError.value) {
-      console.log(`Username: ${formData.value.username}`)
-      console.log(`Name: ${formData.value.name}`)
-      console.log(`Password: ${formData.value.password}`)
-      console.log(`Confirm Password: ${formData.value.confirmPassword}`)
+      userRegister(formData.value).then((res) => {
+        console.log(res);
+        
+        if (res.data.code === 200) {
+          ElMessage.success(res.data.msg)
+          router.push('/login')
+        }
+      }).catch(() => {
+        ElMessage.error('用户名已经存在！')
+      })
     }
   })
 }

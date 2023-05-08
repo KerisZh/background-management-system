@@ -65,6 +65,10 @@ app.post("/modify", (req, res) => {
     });
 });
 
+app.post("/delete", (req, res) => {
+  
+})
+
 app.get("/test", (req, res) => {
   res.send("Hello World");
 }); // testing the server

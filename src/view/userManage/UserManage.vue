@@ -14,7 +14,7 @@
     <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column type="index" width="80" label="序号"></el-table-column>
-      <el-table-column prop="account" label="账号"></el-table-column>
+      <el-table-column prop="username" label="账号"></el-table-column>
       <el-table-column prop="name" label="姓名"></el-table-column>
       <el-table-column label="操作">
         <template #default="{ row }">
@@ -23,63 +23,65 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog title="添加用户" v-model=" showAddDialog " width="30%">
-      <el-form :model=" addFormData " label-width="100px" label-position="top">
+    <el-dialog title="添加用户" v-model="showAddDialog" width="30%">
+      <el-form :model="addFormData" label-width="100px" label-position="top">
         <el-form-item label="账号">
-          <el-input v-model.trim=" addFormData.account "></el-input>
+          <el-input v-model.trim="addFormData.username"></el-input>
         </el-form-item>
         <el-form-item label="姓名">
-          <el-input v-model.trim=" addFormData.name "></el-input>
+          <el-input v-model.trim="addFormData.name"></el-input>
         </el-form-item>
         <el-form-item label="密码">
-          <el-input v-model.trim=" addFormData.password "></el-input>
+          <el-input v-model.trim="addFormData.password"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click=" showAddDialog = false ">取消</el-button>
-        <el-button type="primary">确定</el-button>
+        <el-button @click=" showAddDialog = false">取消</el-button>
+        <el-button type="primary" @click="confirmAdd(addFormData)">确定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="编辑用户" v-model=" showEditDialog " width="30%">
-      <el-form :model=" editFormData " label-width="100px" label-position="top">
+    <el-dialog title="编辑用户" v-model="showEditDialog" width="30%">
+      <el-form :model="editFormData" label-width="100px" label-position="top">
         <el-form-item label="账号">
-          <el-input v-model.trim=" editFormData.account " disabled></el-input>
+          <el-input v-model.trim="editFormData.username" disabled></el-input>
         </el-form-item>
         <el-form-item label="姓名">
-          <el-input v-model.trim=" editFormData.name "></el-input>
+          <el-input v-model.trim="editFormData.name"></el-input>
         </el-form-item>
         <el-form-item label="密码">
-          <el-input type="password" v-model.trim=" editFormData.password " ></el-input>
+          <el-input type="password" v-model.trim="editFormData.password"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click=" showEditDialog = false ">取消</el-button>
-        <el-button type="primary">确定</el-button>
+        <el-button @click=" showEditDialog = false">取消</el-button>
+        <el-button type="primary" @click="confirmEdit(editFormData)">确定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="提示" v-model=" showDialog " width="30%">
-      <p v-if=" currentRow ">确定要删除{{ currentRow.name }}吗？</p>
-      <p v-else>确定要删除选中的{{ selectedRows?.values.length }}条数据吗？</p>
+    <el-dialog title="提示" v-model="showDialog" width="30%">
+      <p v-if="currentRow">确定要删除{{ currentRow.name }}吗？</p>
+      <p v-else>确定要删除选中的{{ selectedRows && selectedRows.length }}条数据吗？</p>
       <span slot="footer" class="dialog-footer">
-        <el-button @click=" showDialog = false ">取消</el-button>
-        <el-button type="primary" @click=" handleConfirmDelete ">确定</el-button>
+        <el-button @click=" showDialog = false">取消</el-button>
+        <el-button type="primary" @click="handleConfirmDelete">确定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
   
 <script setup lang="ts">
+import { userRegister } from '@/api/user';
+import { ElMessage } from 'element-plus';
 import { reactive, Ref, ref } from 'vue';
 
 interface TableData {
-  account: string;
+  username: string;
   name: string;
 }
 
 const originalTableData: Ref<TableData[]> = ref([
-  { account: '001', name: '张三' },
-  { account: '002', name: '李四' },
-  { account: '003', name: '王五' },
+  { username: '001', name: '张三' },
+  { username: '002', name: '李四' },
+  { username: '003', name: '王五' },
 ]);
 
 const tableData: Ref<TableData[]> = ref(originalTableData.value);
@@ -92,21 +94,21 @@ let currentRow: TableData;
 
 
 const addFormData = reactive({
-  account: '',
+  username: '',
   name: '',
   password: ''
 });
 const showAddDialog = ref(false);
 
 const editFormData = reactive({
-  account: '',
+  username: '',
   name: '',
   password: ''
 });
 const showEditDialog = ref(false);
 
 function handleEdit(row: TableData) {
-  editFormData.account = row.account;
+  editFormData.username = row.username;
   editFormData.name = row.name;
   editFormData.password = '';
   showEditDialog.value = true;
@@ -160,6 +162,8 @@ function handleConfirmDelete() {
       tableData.value.splice(index, 1);
     }
   } else {
+    console.log(selectedRows.value?.length);
+
     selectedRows.value?.forEach((row) => {
       const index = tableData.value.findIndex((item) => item.name === row.name);
       if (index !== -1) {
@@ -171,6 +175,25 @@ function handleConfirmDelete() {
   // currentRow = [];
   selectedRows.value = [];
   showDialog.value = false;
+}
+
+const confirmEdit = (data: any) => {
+  console.log(data.username);
+  console.log(data.name);
+  console.log(data.password);
+
+}
+
+const confirmAdd = (data: any) => {
+  console.log(data);
+  userRegister(data).then((res) => {
+    if (res.data.code === 200) {
+      ElMessage.success('新增成功')
+      showAddDialog.value = false
+    }
+  }).catch(() => {
+    ElMessage.error('用户名已经存在！')
+  })
 }
 
 </script>

@@ -50,7 +50,7 @@ const logIn = async (formEl: FormInstance | undefined) => {
     if (valid) {
       if (ruleForm.username === 'admin' && ruleForm.password === 'admin') {
         localStorage.setItem('userType', 'manager')
-        router.replace('./manage')
+        router.push('./manage')
       } else {
         userLogin(ruleForm).then(res => {
           if (res.data.code === 200) {

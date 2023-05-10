@@ -40,6 +40,7 @@ app.post("/login", (req, res) => {
     });
 });
 
+// 注册
 app.post("/register", (req, res) => {
   const sql = `INSERT INTO user (username, password, name) VALUES ('${req.body.username}', '${req.body.password}', '${req.body.name}')`;
   conMysql(sql)
@@ -53,6 +54,7 @@ app.post("/register", (req, res) => {
     });
 });
 
+// 修改信息
 app.post("/modify", (req, res) => {
   const sql = `UPDATE user SET password = '${req.body.password}', name = '${req.body.name}' WHERE username = '${req.body.username}'`;
   conMysql(sql)
@@ -65,9 +67,35 @@ app.post("/modify", (req, res) => {
     });
 });
 
+// 获取所有用户
+app.get("/users", (req, res) => {
+  const sql = `SELECT * FROM user`;
+  console.log('1231231')
+  conMysql(sql)
+    .then((result) => {
+      const response = new Response(true, "获取用户列表成功", 200, result);
+      res.send(response);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
+});
+
+// 删除用户
 app.post("/delete", (req, res) => {
-  
-})
+  // const usernames = req.body.usernames;
+  console.log(req.body);
+  const sql = `DELETE FROM user WHERE username IN ( '${req.body.join("','")}' )`;
+  conMysql(sql)
+    .then((result) => {
+      const response = new Response(true, "删除成功", 200, result);
+      res.send(response);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
+});
+
 
 app.get("/test", (req, res) => {
   res.send("Hello World");

@@ -12,4 +12,12 @@ const userModify = (data: any) => {
   return axios.post("/modify", data);
 };
 
-export { userLogin, userRegister, userModify };
+const getUsers = () => {
+  return axios.get("/users");
+}
+
+const deleteUser = (data: any) => {
+  return axios.post("/delete", data);
+}
+
+export { userLogin, userRegister, userModify, getUsers, deleteUser };

@@ -24,14 +24,14 @@
       </el-table-column>
     </el-table>
     <el-dialog title="添加用户" v-model="showAddDialog" width="30%">
-      <el-form :model="addFormData" label-width="100px" label-position="top">
-        <el-form-item label="账号">
+      <el-form :model="addFormData" label-width="100px" label-position="top" :rules="rules" ref="addRef">
+        <el-form-item label="账号" prop="username">
           <el-input v-model.trim="addFormData.username"></el-input>
         </el-form-item>
-        <el-form-item label="姓名">
+        <el-form-item label="姓名" prop="name">
           <el-input v-model.trim="addFormData.name"></el-input>
         </el-form-item>
-        <el-form-item label="密码">
+        <el-form-item label="密码" prop="password">
           <el-input v-model.trim="addFormData.password"></el-input>
         </el-form-item>
       </el-form>
@@ -41,14 +41,14 @@
       </span>
     </el-dialog>
     <el-dialog title="编辑用户" v-model="showEditDialog" width="30%">
-      <el-form :model="editFormData" label-width="100px" label-position="top">
-        <el-form-item label="账号">
+      <el-form :model="editFormData" label-width="100px" label-position="top" :rules="rules" ref="editRef">
+        <el-form-item label="账号" prop="username">
           <el-input v-model.trim="editFormData.username" disabled></el-input>
         </el-form-item>
-        <el-form-item label="姓名">
+        <el-form-item label="姓名" prop="name">
           <el-input v-model.trim="editFormData.name"></el-input>
         </el-form-item>
-        <el-form-item label="密码">
+        <el-form-item label="密码" prop="password">
           <el-input type="password" v-model.trim="editFormData.password"></el-input>
         </el-form-item>
       </el-form>
@@ -69,22 +69,16 @@
 </template>
   
 <script setup lang="ts">
-import { userRegister } from '@/api/user';
-import { ElMessage } from 'element-plus';
-import { reactive, Ref, ref } from 'vue';
+import { userRegister, getUsers, deleteUser, userModify } from '@/api/user';
+import { ElMessage,FormRules } from 'element-plus';
+import { reactive, Ref, ref, onMounted } from 'vue';
 
 interface TableData {
   username: string;
   name: string;
 }
 
-const originalTableData: Ref<TableData[]> = ref([
-  { username: '001', name: '张三' },
-  { username: '002', name: '李四' },
-  { username: '003', name: '王五' },
-]);
-
-const tableData: Ref<TableData[]> = ref(originalTableData.value);
+const tableData: Ref<TableData[]> = ref([]);
 const selectedRows = ref<TableData[]>();
 const searchForm = reactive({
   name: '',
@@ -93,6 +87,7 @@ const showDialog = ref(false);
 let currentRow: TableData;
 
 
+const addRef = ref()
 const addFormData = reactive({
   username: '',
   name: '',
@@ -100,12 +95,54 @@ const addFormData = reactive({
 });
 const showAddDialog = ref(false);
 
+const editRef = ref()
 const editFormData = reactive({
   username: '',
   name: '',
   password: ''
 });
 const showEditDialog = ref(false);
+
+const rules = reactive<FormRules>({
+  username: [{
+    required: true,
+    message: '请输入用户名',
+    trigger: 'blur'
+  }],
+  name: [{
+    required: true,
+    message: '请输入姓名',
+    trigger: 'blur'
+  }],
+  password: [{
+    required: true,
+    message: '请输入密码',
+    trigger: 'blur'
+  }]
+})
+
+onMounted(() => {
+  getAllUsers()
+});
+
+const getAllUsers = () => {
+  getUsers().then(res => {
+    tableData.value = res.data.data;
+  }).catch(err => {
+    console.log(err);
+  });
+}
+
+const deleteUsers = (arr: any) => {
+  deleteUser(arr).then((res) => {
+    if (res.data.code == 200) {
+      getAllUsers()
+      ElMessage.success(res.data.msg)
+    }
+  }).catch((err) => {
+    console.log(err);
+  })
+}
 
 function handleEdit(row: TableData) {
   editFormData.username = row.username;
@@ -139,12 +176,12 @@ function handleSearch() {
     return;
   }
   // 进行模糊查询，更新表格数据
-  tableData.value = originalTableData.value.filter((item) => item.name.includes(keyword));
+  // tableData.value = originalTableData.value.filter((item) => item.name.includes(keyword));
 }
 
 function handleReset() {
   searchForm.name = '';
-  tableData.value = originalTableData.value;
+  // tableData.value = originalTableData.value;
 }
 
 function handleBatchDelete() {
@@ -159,17 +196,17 @@ function handleConfirmDelete() {
   if (currentRow) {
     const index = tableData.value.findIndex((item) => item.name === currentRow.name);
     if (index !== -1) {
-      tableData.value.splice(index, 1);
+      // tableData.value.splice(index, 1);
+      deleteUsers([currentRow.username])
+      // currentRow = null;
     }
   } else {
-    console.log(selectedRows.value?.length);
-
+    const usernames: any = []
     selectedRows.value?.forEach((row) => {
-      const index = tableData.value.findIndex((item) => item.name === row.name);
-      if (index !== -1) {
-        tableData.value.splice(index, 1);
-      }
+      usernames.push(row.username)
     });
+    deleteUsers(usernames)
+
   }
 
   // currentRow = [];
@@ -181,13 +218,29 @@ const confirmEdit = (data: any) => {
   console.log(data.username);
   console.log(data.name);
   console.log(data.password);
+  if(!editRef.value) return
+  userModify(data).then((res) => {
+    console.log(res);
+    if(res.data.code === 200) {
+      // localStorage.setItem('userInfo', JSON.stringify(data))
+      ElMessage.success(res.data.msg)
+      showEditDialog.value = false
+      getAllUsers()
+    }
+  }).catch((err) => {
+    console.log(err);
+    
+  })
 
 }
 
 const confirmAdd = (data: any) => {
   console.log(data);
+  if(!addRef.value) return
+  
   userRegister(data).then((res) => {
     if (res.data.code === 200) {
+      getAllUsers()
       ElMessage.success('新增成功')
       showAddDialog.value = false
     }

@@ -70,7 +70,7 @@
   
 <script setup lang="ts">
 import { userRegister, getUsers, deleteUser, userModify } from '@/api/user';
-import { ElMessage,FormRules } from 'element-plus';
+import { ElMessage, FormRules } from 'element-plus';
 import { reactive, Ref, ref, onMounted } from 'vue';
 
 interface TableData {
@@ -215,37 +215,37 @@ function handleConfirmDelete() {
 }
 
 const confirmEdit = (data: any) => {
-  console.log(data.username);
-  console.log(data.name);
-  console.log(data.password);
-  if(!editRef.value) return
-  userModify(data).then((res) => {
-    console.log(res);
-    if(res.data.code === 200) {
-      // localStorage.setItem('userInfo', JSON.stringify(data))
-      ElMessage.success(res.data.msg)
-      showEditDialog.value = false
-      getAllUsers()
-    }
-  }).catch((err) => {
-    console.log(err);
-    
-  })
+  editRef.value?.validate((valid: boolean) => { // 使用可选链运算符
+    if (valid) {
+      userModify(data).then((res) => {
+        console.log(res);
+        if (res.data.code === 200) {
+          // localStorage.setItem('userInfo', JSON.stringify(data))
+          ElMessage.success(res.data.msg)
+          showEditDialog.value = false
+          getAllUsers()
+        }
+      }).catch((err) => {
+        console.log(err);
 
+      })
+    }
+  })
 }
 
 const confirmAdd = (data: any) => {
-  console.log(data);
-  if(!addRef.value) return
-  
-  userRegister(data).then((res) => {
-    if (res.data.code === 200) {
-      getAllUsers()
-      ElMessage.success('新增成功')
-      showAddDialog.value = false
+  addRef.value?.validate((valid: boolean) => { // 使用可选链运算符
+    if (valid) {
+      userRegister(data).then((res) => {
+        if (res.data.code === 200) {
+          getAllUsers()
+          ElMessage.success('新增成功')
+          showAddDialog.value = false
+        }
+      }).catch(() => {
+        ElMessage.error('用户名已经存在！')
+      })
     }
-  }).catch(() => {
-    ElMessage.error('用户名已经存在！')
   })
 }
 

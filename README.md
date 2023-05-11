@@ -14,12 +14,16 @@
 
 ## 操作说明
 系统分为普通用户和管理员角色，根据登录时的账号密码进行区分
+![Alt](public\login.jpg#pic_center)
 
 1. 管理员
-	账号密码均为**admin**，登录成功后界面如图所示
-	列表展示所有用户信息，支持增删改查操作
+	 账号密码均为**admin**，登录成功后界面如图所示
+   ![Alt](public\userManage.jpg#pic_center)
+	 列表展示所有用户信息，支持增删改查操作
 	
 2. 普通用户
     首次使用系统可通过登录页面中的**注册**按钮注册账号
+    ![Alt](public\register.jpg#pic_center)
     注册成功即可返回登录页面登录系统，登录成功后页面如图所示
+    ![Alt](public\userInfo.jpg#pic_center)
     允许用户修改个人信息，包括姓名及密码

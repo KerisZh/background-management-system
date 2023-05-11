@@ -1,8 +1,4 @@
 <template>
-  <!-- <el-radio-group v-model="isCollapse" style="margin-bottom: 20px">
-    <el-radio-button :label="false">expand</el-radio-button>
-    <el-radio-button :label="true">collapse</el-radio-button>
-  </el-radio-group> -->
   <el-menu default-active="2" class="el-menu-vertical" :collapse="collapsed">
     <el-menu-item v-show="userType === 'user'" index="1">
       <el-icon>
@@ -20,8 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onBeforeMount, onMounted } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import { ref, onMounted } from 'vue'
 import router from '@/router'
 
 defineProps({
@@ -39,12 +34,6 @@ onMounted(() => {
     alert('请先登录')
   }
 })
-
-
-const isManager = () => {
-  return localStorage.getItem('userType') === 'manager' || false
-}
-
 </script>
 
 <style>

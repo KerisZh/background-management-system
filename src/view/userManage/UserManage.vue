@@ -76,15 +76,17 @@ import { reactive, Ref, ref, onMounted } from 'vue';
 interface TableData {
   username: string;
   name: string;
+  password: string
 }
-
+const originalTableData = ref([] as TableData[]);
 const tableData: Ref<TableData[]> = ref([]);
 const selectedRows = ref<TableData[]>();
+const currentRow = ref<TableData>();
 const searchForm = reactive({
   name: '',
 });
 const showDialog = ref(false);
-let currentRow: TableData;
+// let currentRow: TableData;
 
 
 const addRef = ref()
@@ -128,6 +130,7 @@ onMounted(() => {
 const getAllUsers = () => {
   getUsers().then(res => {
     tableData.value = res.data.data;
+    originalTableData.value = tableData.value;
   }).catch(err => {
     console.log(err);
   });
@@ -147,27 +150,16 @@ const deleteUsers = (arr: any) => {
 function handleEdit(row: TableData) {
   editFormData.username = row.username;
   editFormData.name = row.name;
-  editFormData.password = '';
+  editFormData.password = row.password;
   showEditDialog.value = true;
 }
 
 function handleAddUser() {
-  console.log('123213');
-
   showAddDialog.value = true;
 }
 
 function handleSelectionChange(rows: TableData[]) {
   selectedRows.value = rows;
-}
-
-// function handleEdit(row: TableData) {
-//   // 编辑逻辑
-// }
-
-function handleDelete(row: TableData) {
-  currentRow = row;
-  showDialog.value = true;
 }
 
 function handleSearch() {
@@ -176,12 +168,12 @@ function handleSearch() {
     return;
   }
   // 进行模糊查询，更新表格数据
-  // tableData.value = originalTableData.value.filter((item) => item.name.includes(keyword));
+  tableData.value = originalTableData.value.filter((item) => item.name.includes(keyword));
 }
 
 function handleReset() {
   searchForm.name = '';
-  // tableData.value = originalTableData.value;
+  tableData.value = originalTableData.value;
 }
 
 function handleBatchDelete() {
@@ -193,12 +185,11 @@ function handleBatchDelete() {
 }
 
 function handleConfirmDelete() {
-  if (currentRow) {
-    const index = tableData.value.findIndex((item) => item.name === currentRow.name);
+  if (currentRow.value) {
+    const index = tableData.value.findIndex((item) => item.name === currentRow.value?.name);
     if (index !== -1) {
-      // tableData.value.splice(index, 1);
-      deleteUsers([currentRow.username])
-      // currentRow = null;
+      deleteUsers([currentRow.value.username])
+      currentRow.value = undefined
     }
   } else {
     const usernames: any = []
@@ -206,10 +197,7 @@ function handleConfirmDelete() {
       usernames.push(row.username)
     });
     deleteUsers(usernames)
-
   }
-
-  // currentRow = [];
   selectedRows.value = [];
   showDialog.value = false;
 }
@@ -220,14 +208,12 @@ const confirmEdit = (data: any) => {
       userModify(data).then((res) => {
         console.log(res);
         if (res.data.code === 200) {
-          // localStorage.setItem('userInfo', JSON.stringify(data))
           ElMessage.success(res.data.msg)
           showEditDialog.value = false
           getAllUsers()
         }
       }).catch((err) => {
         console.log(err);
-
       })
     }
   })

@@ -13,7 +13,6 @@
       </el-form-item>
       <el-form-item label="确认密码" prop="confirmPassword">
         <el-input type="password" v-model="formData.confirmPassword"></el-input>
-        <!-- <div v-if="passwordError" style="color: red;">两次输入的密码不相同，请重新输入。</div> -->
       </el-form-item>
       <el-form-item>
         <el-button style="margin-left: 128px;" type="primary" @click="submitForm">注册</el-button>
@@ -68,16 +67,6 @@ const rules = reactive<FormRules>({
 
 const formRef = ref()
 const passwordError = ref(false)
-
-// function checkPassword() {
-//   if (formData.value.password !== formData.value.confirmPassword) {
-//     passwordError.value = true
-//     return new Error('两次输入的密码不相同，请重新输入。')
-//   } else {
-//     passwordError.value = false
-//     return undefined
-//   }
-// }
 
 function checkPassword(rule: any, value: string, callback: Function) {
   if (value !== formData.value.password) {

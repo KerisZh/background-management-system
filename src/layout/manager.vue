@@ -3,8 +3,6 @@
     <el-aside width="auto">
       <logo-bar :collapsed="collapsed" />
       <menu-bar :collapsed="collapsed" />
-      <!-- <el-scrollbar>
-      </el-scrollbar> -->
     </el-aside>
 
     <el-container style="background-color: #ecf5ff;">
@@ -31,12 +29,11 @@
 
 
 <script lang="ts" setup>
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted } from 'vue'
 import LogoBar from './components/LogoBar/index.vue'
 import MenuBar from './components/MenuBar/index.vue'
 import { Expand, Fold } from '@element-plus/icons-vue'
 import UserManage from '@/view/userManage/UserManage.vue'
-import UserInfo from '@/view/userInfo/UserInfo.vue'
 import router from '@/router'
 
 const collapsed = ref<boolean>(false)
@@ -84,20 +81,4 @@ const logOut = () => {
   background: var(--el-color-primary-light-8);
   overflow: hidden;
 }
-
-/* 
-
-.layout-container-demo .el-menu {
-  border-right: none;
-}
-.layout-container-demo .el-main {
-  padding: 0;
-}
-.layout-container-demo .toolbar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  right: 20px;
-} */
 </style>

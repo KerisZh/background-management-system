@@ -1,6 +1,5 @@
 <template>
   <div class="logo-bar">
-    <!-- <image src="../../../assets/vue.svg"></image> -->
     <h1 v-if="collapsed">V</h1>
     <h1 v-else>Vue3 Vite</h1>
   </div>

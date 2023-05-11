@@ -1,19 +1,25 @@
-# Vue 3 + TypeScript + Vite
+# 后台管理系统
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+本项目采用Vue3 + TypeScript + Vite等技术实现了一个管理用户的后台管理系统
 
-## Recommended IDE Setup
+## 所需配置
+- Node.js(16.x及以上版本)
+- 推荐使用 VS Code IDE
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## 项目运行
+- 使用 VS Code 打开项目，运行`npm i`安装所需依赖
+- 运行`npm run dev`启动项目
+- 在**bms-node-server**文件夹下，运行`node index.js`
+- 浏览器打开[localhost:5173](htttp://localhost:5173/)(默认)
 
-## Type Support For `.vue` Imports in TS
+## 操作说明
+系统分为普通用户和管理员角色，根据登录时的账号密码进行区分
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
-
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
-
-1. Disable the built-in TypeScript Extension
-   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
-1
+1. 管理员
+	账号密码均为**admin**，登录成功后界面如图所示
+	列表展示所有用户信息，支持增删改查操作
+	
+2. 普通用户
+    首次使用系统可通过登录页面中的**注册**按钮注册账号
+    注册成功即可返回登录页面登录系统，登录成功后页面如图所示
+    允许用户修改个人信息，包括姓名及密码

@@ -10,7 +10,7 @@
         <el-input type="password" v-model="ruleForm.password"></el-input>
       </el-form-item>
       <el-form-item class="login-button">
-        <el-button type="primary" @click="logIn(ruleFormRef)">登录</el-button>
+        <el-button type="primary" @click="logIn(ruleFormRef)" @keyup.enter="(e: any) => keyUp(e)">登录</el-button>
         <el-button @click="register">注册</el-button>
       </el-form-item>
     </el-form>
@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { FormInstance, FormRules, ElMessage } from 'element-plus'
 import router from '@/router'
 import { userLogin } from '@/api/user'
@@ -42,6 +42,20 @@ const rules = reactive<FormRules>({
   }]
 })
 
+onMounted(() => {
+  window.addEventListener('keyup', keyUp)
+})
+
+onUnmounted(() => {
+  //销毁事件
+  window.removeEventListener('keyup', keyUp, false)
+})
+
+const keyUp = (e: any) => {
+  if (e.keyCode === 13 || e.keyCode === 100) {
+    logIn(ruleFormRef.value)
+  }
+}
 
 //表单提交
 const logIn = async (formEl: FormInstance | undefined) => {
@@ -50,30 +64,25 @@ const logIn = async (formEl: FormInstance | undefined) => {
     if (valid) {
       if (ruleForm.username === 'admin' && ruleForm.password === 'admin') {
         localStorage.setItem('userType', 'manager')
-        router.push('./manage')
+        router.push('/manage')
       } else {
-        userLogin(ruleForm).then(res => {
+        userLogin(ruleForm).then(async (res) => {
           if (res.data.code === 200) {
             localStorage.setItem('userType', 'user')
             localStorage.setItem('userInfo', JSON.stringify(res.data.data[0]));
-            router.push('./info')
+            await router.push('/info')
             ElMessage.success('登录成功')
           } else {
-            ElMessage.warning(res.data.msg)
+            ElMessage.error(res.data.msg)
           }
-
         })
-
       }
-      console.log('submit!')
-    } else {
-      console.log('error submit!', fields)
     }
   })
 }
 
 const register = () => {
-  router.push('./register')
+  router.push('/register')
 }
 
 </script>
@@ -91,6 +100,6 @@ const register = () => {
 
 .login-button {
   display: inline-block;
-  margin-left: 176px;
+  margin: 30px 0 0 176px;
 }
 </style>

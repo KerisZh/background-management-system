@@ -14,8 +14,9 @@
       <el-form-item label="确认密码" prop="confirmPassword">
         <el-input type="password" v-model="formData.confirmPassword"></el-input>
       </el-form-item>
-      <el-form-item>
-        <el-button style="margin-left: 128px;" type="primary" @click="submitForm">注册</el-button>
+      <el-form-item class="centerItem">
+        <el-button style="margin: 0 70px 0 120px" type="primary" @click="submitForm">注册</el-button>
+        <a href="/login">已有账号？立即登录</a>
       </el-form-item>
     </el-form>
   </el-card>
@@ -84,7 +85,7 @@ function submitForm() {
     if (valid && !passwordError.value) {
       userRegister(formData.value).then((res) => {
         console.log(res);
-        
+
         if (res.data.code === 200) {
           ElMessage.success(res.data.msg)
           router.push('/login')

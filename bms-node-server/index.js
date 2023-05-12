@@ -45,7 +45,6 @@ app.post("/register", (req, res) => {
   const sql = `INSERT INTO user (username, password, name) VALUES ('${req.body.username}', '${req.body.password}', '${req.body.name}')`;
   conMysql(sql)
     .then((result) => {
-      console.log(result);
       const response = new Response(true, "注册成功", 200, result);
       res.send(response);
     })
@@ -70,7 +69,6 @@ app.post("/modify", (req, res) => {
 // 获取所有用户
 app.get("/users", (req, res) => {
   const sql = `SELECT * FROM user`;
-  console.log('1231231')
   conMysql(sql)
     .then((result) => {
       const response = new Response(true, "获取用户列表成功", 200, result);
@@ -83,8 +81,6 @@ app.get("/users", (req, res) => {
 
 // 删除用户
 app.post("/delete", (req, res) => {
-  // const usernames = req.body.usernames;
-  console.log(req.body);
   const sql = `DELETE FROM user WHERE username IN ( '${req.body.join("','")}' )`;
   conMysql(sql)
     .then((result) => {

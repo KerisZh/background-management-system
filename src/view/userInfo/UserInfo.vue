@@ -70,7 +70,6 @@ const modifyInfo = () => {
   modifyRef.value?.validate((valid: boolean) => { // 使用可选链运算符
     if (valid) {
       userModify(formLabelAlign).then((res) => {
-        console.log(res);
         if (res.data.code === 200) {
           localStorage.setItem('userInfo', JSON.stringify(formLabelAlign))
           ElMessage.success(res.data.msg)

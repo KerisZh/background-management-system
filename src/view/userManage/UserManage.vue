@@ -165,6 +165,7 @@ function handleSelectionChange(rows: TableData[]) {
 function handleSearch() {
   const keyword = searchForm.name.trim();
   if (keyword === '') {
+    ElMessage.warning('请输入查询关键词')
     return;
   }
   // 进行模糊查询，更新表格数据
@@ -178,7 +179,7 @@ function handleReset() {
 
 function handleBatchDelete() {
   if (!selectedRows.value || selectedRows.value.length === 0) {
-    console.log('至少选择一条数据');
+    ElMessage.warning('请选择要删除的数据');
     return;
   }
   showDialog.value = true;
@@ -206,7 +207,6 @@ const confirmEdit = (data: any) => {
   editRef.value?.validate((valid: boolean) => { // 使用可选链运算符
     if (valid) {
       userModify(data).then((res) => {
-        console.log(res);
         if (res.data.code === 200) {
           ElMessage.success(res.data.msg)
           showEditDialog.value = false

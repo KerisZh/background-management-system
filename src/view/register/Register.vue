@@ -79,13 +79,9 @@ function checkPassword(rule: any, value: string, callback: Function) {
 
 
 function submitForm() {
-  console.log(formRef);
-
   formRef.value?.validate((valid: boolean) => { // 使用可选链运算符
     if (valid && !passwordError.value) {
       userRegister(formData.value).then((res) => {
-        console.log(res);
-
         if (res.data.code === 200) {
           ElMessage.success(res.data.msg)
           router.push('/login')

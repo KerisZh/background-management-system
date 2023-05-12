@@ -9,10 +9,10 @@
         <el-input v-model="formData.name"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password">
-        <el-input type="password" v-model="formData.password"></el-input>
+        <el-input type="password" v-model="formData.password" show-password></el-input>
       </el-form-item>
       <el-form-item label="确认密码" prop="confirmPassword">
-        <el-input type="password" v-model="formData.confirmPassword"></el-input>
+        <el-input type="password" v-model="formData.confirmPassword" show-password></el-input>
       </el-form-item>
       <el-form-item class="centerItem">
         <el-button style="margin: 0 70px 0 120px" type="primary" @click="submitForm">注册</el-button>

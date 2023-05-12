@@ -2,7 +2,7 @@
   <div class="table-container">
     <el-form :inline="true" :model="searchForm" class="search-form">
       <el-form-item label="姓名">
-        <el-input v-model.trim="searchForm.name" placeholder="请输入姓名"></el-input>
+        <el-input v-model.trim="searchForm.name" placeholder="请输入姓名" @keydown.enter.prevent="handleSearch"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="handleSearch">查询</el-button>
@@ -49,7 +49,7 @@
           <el-input v-model.trim="editFormData.name"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input type="password" v-model.trim="editFormData.password"></el-input>
+          <el-input type="password" v-model.trim="editFormData.password" show-password></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

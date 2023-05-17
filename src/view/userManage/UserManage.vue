@@ -32,7 +32,7 @@
           <el-input v-model.trim="addFormData.name"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model.trim="addFormData.password"></el-input>
+          <el-input v-model.trim="addFormData.password" show-password></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

@@ -24,6 +24,7 @@
 2. 普通用户
     首次使用系统可通过登录页面中的**注册**按钮注册账号
     ![image](https://github.com/KerisZh/background-management-system/blob/main/public/register.jpg)
+    
     注册成功即可返回登录页面登录系统，登录成功后页面如图所示
     ![image](https://github.com/KerisZh/background-management-system/blob/main/public/userInfo.jpg)
     允许用户修改个人信息，包括姓名及密码
